@@ -45,7 +45,7 @@ module Jekyll
         FileUtils.mkdir_p(File.dirname(dest_path))
         image = ::MiniMagick::Image.open(path)
         @commands.each_pair do |command, arg|
-          image.send command, arg
+          image.resize arg
           @size = arg
         end
         image.write dest_path
