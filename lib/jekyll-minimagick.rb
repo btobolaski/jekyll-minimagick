@@ -50,10 +50,10 @@ module Jekyll
         end
         image.write dest_path
 
-        width, height = @size.match(/([0-9]+)x([0-9]+)/i)
-        retinaSize = "#{width * 2}x#{height * 2}"
-        path, extension = dest_path.match(/(.+)(\.[a-zA-Z]{3,4})/i)
-        dest_path = "#{path}@2x#{extension}"
+        width, height = @size.match(/([0-9]+)x([0-9]+)/i).captures
+        retinaSize = "#{Integer(width) * 2}x#{Integer(height) * 2}"
+        filepath, extension = dest_path.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
+        dest_path = "#{filepath}@2x#{extension}"
         retinaImage = ::MiniMagick::Image.open(path)
         retinaImage.resize retinaSize
         retinaImage.write dest_path
