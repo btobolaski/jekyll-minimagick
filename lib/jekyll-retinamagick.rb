@@ -1,7 +1,7 @@
 require 'mini_magick'
 
 module Jekyll
-  module JekyllMinimagick
+  module JekyllRetinamagick
 
     class GeneratedImageFile < Jekyll::StaticFile
       # Initialize a new GeneratedImage.
@@ -70,9 +70,9 @@ module Jekyll
       # in the site config.  Add a GeneratedImageFile to the static_files stack
       # for later processing.
       def generate(site)
-        return unless site.config['mini_magick']
+        return unless site.config['retinamagick']
 
-        site.config['mini_magick'].each_pair do |name, preset|
+        site.config['retinamagick'].each_pair do |name, preset|
           Dir.glob(File.join(site.source, preset['source'], "*.{png,jpg,jpeg,gif}")) do |source|
             site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone)
           end

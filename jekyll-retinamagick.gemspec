@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "jekyll-minimagick/version"
+require "jekyll-retinamagick/version"
 
 Gem::Specification.new do |s|
-  s.name        = "jekyll-minimagick"
-  s.version     = Jekyll::Minimagick::VERSION
+  s.name        = "jekyll-retinamagick"
+  s.version     = Jekyll::Retinamagick::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Roger López"]
-  s.email       = ["roger@zroger.com"]
-  s.homepage    = "http://github.com/zroger/jekyll-minimagick"
-  s.summary     = %q{MiniMagick integration for Jekyll}
-  s.description = %q{Use MiniMagick to crop and resize images in your Jekyll project.}
+  s.authors     = ["Brendan Tobolaski"]
+  s.email       = ["brendan@tobolaski.com"]
+  s.homepage    = "http://github.com/btobolaski/jekyll-retinamagick"
+  s.summary     = %q{MiniMagick integration, including retina support, for Jekyll}
+  s.description = %q{Use MiniMagick to create the image sizes that you need. A fork of jekyll-minimagick.}
 
-  s.rubyforge_project = "jekyll-minimagick"
+  s.rubyforge_project = "jekyll-retinamagick"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

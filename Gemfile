@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
-# Specify your gem's dependencies in jekyll-minimagick.gemspec
+# Specify your gem's dependencies in jekyll-retinamagick.gemspec
 gemspec
