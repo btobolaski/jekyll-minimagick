@@ -40,7 +40,7 @@ Define presets in your _config.yml file, like this:
 			resize: "600x400"
 
 This configuration will create a 100x100 thumbnail for each image in
-`img/photos/original` and put it in `\_site/img/photos/thumbnail`. It will also
+`img/photos/original` and put it in `_site/img/photos/thumbnail`. It will also
 generate a 200x200 thumbnail and add an `@2x` between the file name and the
 extention. It will also generate a 600x400 and 1200x800 image in a similar way
 and then place them in `_site/img/photos/medium`.
