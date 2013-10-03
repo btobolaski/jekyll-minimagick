@@ -52,7 +52,7 @@ module Jekyll
         @commands.each_pair do |command, arg|
           if @retina
             width, height = arg.match(/([0-9]+)x([0-9]+)/i).captures
-            arg = "#{Integer(width) * 2}x#{Integer(height) * 2}")
+            arg = "#{Integer(width) * 2}x#{Integer(height) * 2}"
           end
           image.resize arg
         end
