@@ -12,7 +12,7 @@ module Jekyll
       #   +preset+ is the Preset hash from the config.
       #
       # Returns <GeneratedImageFile>
-      def initialize(site, base, dir, name, preset)
+      def initialize(site, base, dir, name, preset, retina)
         @site = site
         @base = base
         @dir  = dir
@@ -20,6 +20,7 @@ module Jekyll
         @dst_dir = preset.delete('destination')
         @src_dir = preset.delete('source')
         @commands = preset
+        @retina = retina
       end
 
       # Obtains source file path by substituting the preset's source directory
@@ -37,6 +38,10 @@ module Jekyll
       # Returns false if the file was not modified since last time (no-op).
       def write(dest)
         dest_path = destination(dest)
+        if @retina
+          filepath, extension = dest_path.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
+          dest_path = "#{filepath}@2x#{extension}"
+        end
 
         return false if File.exist? dest_path and !modified?
 
@@ -45,18 +50,13 @@ module Jekyll
         FileUtils.mkdir_p(File.dirname(dest_path))
         image = ::MiniMagick::Image.open(path)
         @commands.each_pair do |command, arg|
+          if @retina
+            width, height = arg.match(/([0-9]+)x([0-9]+)/i).captures
+            arg = "#{Integer(width) * 2}x#{Integer(height) * 2}")
+          end
           image.resize arg
-          @size = arg
         end
         image.write dest_path
-
-        width, height = @size.match(/([0-9]+)x([0-9]+)/i).captures
-        retinaSize = "#{Integer(width) * 2}x#{Integer(height) * 2}"
-        filepath, extension = dest_path.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
-        dest_path = "#{filepath}@2x#{extension}"
-        retinaImage = ::MiniMagick::Image.open(path)
-        retinaImage.resize retinaSize
-        retinaImage.write dest_path
 
         true
       end
@@ -74,7 +74,8 @@ module Jekyll
 
         site.config['retinamagick'].each_pair do |name, preset|
           Dir.glob(File.join(site.source, preset['source'], "*.{png,jpg,jpeg,gif}")) do |source|
-            site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone)
+            site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, false)
+            site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, true)
           end
         end
       end
