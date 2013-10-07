@@ -24,7 +24,7 @@ module Jekyll
           filepath, extension = name.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
           @name = "#{filepath}@2x#{extension}"
           if @commands.has_key?("resize")
-            size = @commands[:resize]
+            size = @commands["resize"]
             width, height = size.match(/([0-9]+)x([0-9]+)/i).captures
             @commands[:resize] = "#{Integer(width) * 2}x#{Integer(height) * 2}"
           end
