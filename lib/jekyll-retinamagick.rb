@@ -43,7 +43,7 @@ module Jekyll
           dest_path = "#{filepath}@2x#{extension}"
         end
 
-        return false if File.exist? dest_path and !modified?
+        return false if File.exist? dest_path
 
         @@mtimes[path] = mtime
 
