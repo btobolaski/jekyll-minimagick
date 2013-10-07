@@ -75,7 +75,9 @@ module Jekyll
         site.config['retinamagick'].each_pair do |name, preset|
           Dir.glob(File.join(site.source, preset['source'], "*.{png,jpg,jpeg,gif}")) do |source|
             site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, false)
-            site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, true)
+            if preset.has_key?("resize")
+              site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, true)
+            end
           end
         end
       end
