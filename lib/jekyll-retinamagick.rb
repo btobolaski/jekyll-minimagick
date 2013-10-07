@@ -20,7 +20,15 @@ module Jekyll
         @dst_dir = preset.delete('destination')
         @src_dir = preset.delete('source')
         @commands = preset
-        @retina = retina
+        if retina
+          filepath, extension = name.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
+          @name = "#{filepath}@2x#{extension}"
+          if @commands[:resize]?
+            size = @commands[:resize]
+            width, height = size.match(/([0-9]+)x([0-9]+)/i).captures
+            @commands[:resize] = "#{Integer(width) * 2}x#{Integer(height) * 2}"
+          end
+        end
       end
 
       # Obtains source file path by substituting the preset's source directory
@@ -38,10 +46,6 @@ module Jekyll
       # Returns false if the file was not modified since last time (no-op).
       def write(dest)
         dest_path = destination(dest)
-        if @retina
-          filepath, extension = dest_path.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
-          dest_path = "#{filepath}@2x#{extension}"
-        end
 
         return false if File.exist? dest_path
 
@@ -50,11 +54,7 @@ module Jekyll
         FileUtils.mkdir_p(File.dirname(dest_path))
         image = ::MiniMagick::Image.open(path)
         @commands.each_pair do |command, arg|
-          if @retina
-            width, height = arg.match(/([0-9]+)x([0-9]+)/i).captures
-            arg = "#{Integer(width) * 2}x#{Integer(height) * 2}"
-          end
-          image.resize arg
+          image.send command, arg
         end
         image.write dest_path
 
