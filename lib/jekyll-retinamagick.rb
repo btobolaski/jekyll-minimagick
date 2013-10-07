@@ -18,9 +18,17 @@ module Jekyll
         @dir  = dir
         @name = name
         @dst_dir = preset.delete('destination')
-        @src_dir = preset.delete('source')
+        @src = File.join(@base, preset.delete('source'), name)
         @commands = preset
-        @retina = retina
+        if retina
+          filepath, extension = name.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
+          @name = "#{filepath}@2x#{extension}"
+          if @commands.has_key?("resize")
+            size = @commands["resize"]
+            width, height = size.match(/([0-9]+)x([0-9]+)/i).captures
+            @commands[:resize] = "#{Integer(width) * 2}x#{Integer(height) * 2}"
+          end
+        end
       end
 
       # Obtains source file path by substituting the preset's source directory
@@ -28,7 +36,7 @@ module Jekyll
       #
       # Returns source file path.
       def path
-        File.join(@base, @dir.sub(@dst_dir, @src_dir), @name)
+        @src
       end
 
       # Use MiniMagick to create a derivative image at the destination
@@ -38,10 +46,6 @@ module Jekyll
       # Returns false if the file was not modified since last time (no-op).
       def write(dest)
         dest_path = destination(dest)
-        if @retina
-          filepath, extension = dest_path.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
-          dest_path = "#{filepath}@2x#{extension}"
-        end
 
         return false if File.exist? dest_path
 
@@ -50,11 +54,7 @@ module Jekyll
         FileUtils.mkdir_p(File.dirname(dest_path))
         image = ::MiniMagick::Image.open(path)
         @commands.each_pair do |command, arg|
-          if @retina
-            width, height = arg.match(/([0-9]+)x([0-9]+)/i).captures
-            arg = "#{Integer(width) * 2}x#{Integer(height) * 2}"
-          end
-          image.resize arg
+          image.send command, arg
         end
         image.write dest_path
 
@@ -75,7 +75,9 @@ module Jekyll
         site.config['retinamagick'].each_pair do |name, preset|
           Dir.glob(File.join(site.source, preset['source'], "*.{png,jpg,jpeg,gif}")) do |source|
             site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, false)
-            site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, true)
+            if preset.has_key?("resize")
+              site.static_files << GeneratedImageFile.new(site, site.source, preset['destination'], File.basename(source), preset.clone, true)
+            end
           end
         end
       end
