@@ -18,7 +18,7 @@ module Jekyll
         @dir  = dir
         @name = name
         @dst_dir = preset.delete('destination')
-        @src_dir = preset.delete('source')
+        @src = File.join(@base, preset.delete('source'), name)
         @commands = preset
         if retina
           filepath, extension = name.match(/(.+)(\.[a-zA-Z]{3,4})/i).captures
@@ -36,7 +36,7 @@ module Jekyll
       #
       # Returns source file path.
       def path
-        File.join(@base, @dir.sub(@dst_dir, @src_dir), @name)
+        @src
       end
 
       # Use MiniMagick to create a derivative image at the destination
