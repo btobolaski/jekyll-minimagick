@@ -51,13 +51,22 @@ module Jekyll
 
         @@mtimes[path] = mtime
 
-        FileUtils.mkdir_p(File.dirname(dest_path))
-        image = ::MiniMagick::Image.open(path)
-        @commands.each_pair do |command, arg|
-          image.send command, arg
-        end
-        image.write dest_path
+        cache_path = File.join(@base, ".minimagick-cache", @dst_dir, @name)
 
+        FileUtils.mkdir_p(File.dirname(cache_path))
+        FileUtils.mkdir_p(File.dirname(dest_path))
+
+        # If the file isn't cached, generate it
+        if not (File.size? cache_path and File.stat(cache_path).mtime.to_i > mtime)
+          image = ::MiniMagick::Image.open(path)
+          @commands.each_pair do |command, arg|
+            image.send command, arg
+          end
+          image.write cache_path
+        end
+
+        FileUtils.cp(cache_path, dest_path)
+        
         true
       end
 
@@ -82,6 +91,5 @@ module Jekyll
         end
       end
     end
-
   end
 end
