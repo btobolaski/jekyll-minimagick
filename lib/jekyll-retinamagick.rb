@@ -26,7 +26,7 @@ module Jekyll
           if @commands.has_key?("resize")
             size = @commands["resize"]
             width, height = size.match(/([0-9]+)x([0-9]+)/i).captures
-            @commands[:resize] = "#{Integer(width) * 2}x#{Integer(height) * 2}"
+            @commands["resize"] = "#{Integer(width) * 2}x#{Integer(height) * 2}"
           end
         end
       end
